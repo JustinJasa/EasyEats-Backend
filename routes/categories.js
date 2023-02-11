@@ -15,6 +15,7 @@ router.route("/:id").get((req,res) => {
 
 // create a new category and add to the categories
 router.route("/").post((req,res) => {
+    res.send("created a new category")
     console.log(req.body)
     res.json({
         status: 'success'

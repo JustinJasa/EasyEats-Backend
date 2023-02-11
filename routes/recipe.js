@@ -13,15 +13,16 @@ router.route('/:id').put((req,res) => {
   res.send(`updated information for ${recipeId}`)
 })
 
-// create a new category and add to the categories
+// create a new receipe
 router.route("/").post((req, res) => {
+  res.send("created a new category")
   console.log(req.body);
   res.json({
     status: "success",
   });
 });
 
-// modify all a recipe
+// delete a recipe
 router.route('/:id').delete((req,res) => {
   let recipeId = req.params.id
   res.send(`deleted ${recipeId}`)

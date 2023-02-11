@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json())
 
 app.use('/categories', categories)
-app.use('/recipe', categories)
+app.use('/recipe', recipe)
 
 
 app.get('/', (req, res) => {
