@@ -1,3 +1,6 @@
+//importing the database
+const database = require('../services/db')
+
 //Queries to database
 
 // get all categories
