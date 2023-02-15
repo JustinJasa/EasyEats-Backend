@@ -59,7 +59,7 @@ CREATE TABLE comments(
 );
 
 -- //////////////
--- Inserting data
+-- Inserting initial data
 -- //////////////
 INSERT INTO users (username, email, password)
 VALUES
