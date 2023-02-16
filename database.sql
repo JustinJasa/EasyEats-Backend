@@ -146,16 +146,3 @@ VALUES
     ((SELECT user_id FROM users WHERE user_id = 3), (SELECT recipe_id FROM recipes WHERE recipe_id = 1), 'Delicious! I will cook this for my friends!', 5),
     ((SELECT user_id FROM users WHERE user_id = 4), (SELECT recipe_id FROM recipes WHERE recipe_id = 2), 'Good taste! :)', 4),
     ((SELECT user_id FROM users WHERE user_id = 4), (SELECT recipe_id FROM recipes WHERE recipe_id = 2), 'Very nice, delicious and easy to make!', 5);
-
--- //////////////
--- Queries
--- //////////////
-SELECT r.name AS recipeName, c.name AS categoryName
-FROM recipes r
-INNER JOIN recipe_categories rc ON r.recipe_id = rc.recipe_id
-INNER JOIN categories c ON rc.category_id = c.category_id;
-
-SELECT u.username AS User, r.name AS Recipe, c.comment as Comment
-FROM users u
-INNER JOIN comments c ON u.user_id = c.user_id
-INNER JOIN recipes r ON c.recipe_id = r.recipe_id;
