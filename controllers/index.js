@@ -1,56 +1,59 @@
 //importing the database
-const database = require('../services/db')
+import pool from '../services/db.js'
 
 //Queries to database
 
 // get all categories
-exports.getAllCategories = (req, res, next) => {
-    res.send("getting all categories")
+export const getAllCategories = async () => {
+    const [rows] = await pool.query(`
+    SELECT name FROM categories`)
+
+    return rows
 };
 
 // get a category
-exports.getCategory = (req, res, next) => {
+export const getCategory = (req, res, next) => {
     res.send("getting a category")
 };
 
 // searching for recipe
-exports.setSearch = (req, res, next) => {
+export const setSearch = (req, res, next) => {
     res.send("searching for an item")
 };
 
 // getting all recipes
-exports.getAllRecipes = (req, res, next) => {
+export const getAllRecipes = (req, res, next) => {
     res.send("getting all recipes")
 };
 
 // getting specific recipe
-exports.getRecipeId = (req, res, next) => {
+export const getRecipeId = (req, res, next) => {
     res.send("getting all a recipe")
 };
 
 // creating a recipe
-exports.createRecipe = (req, res, next) => {
+export const createRecipe = (req, res, next) => {
     res.send("getting all a recipe")
 };
 
 //deleting recipe
-exports.deleteRecipe = (req, res, next) => {
+export const deleteRecipe = (req, res, next) => {
     res.send("getting all a recipe")
 };
 
 // update/edit recipe
-exports.editRecipe = (req, res, next) => {
+export const editRecipe = (req, res, next) => {
     res.send("getting all a recipe")
 };
 
-exports.createAccount = (req, res, next) => {
+export const createAccount = (req, res, next) => {
     res.send("getting all a recipe")
 };
 
-exports.updateAccount = (req, res, next) => {
+export const updateAccount = (req, res, next) => {
     res.send("getting all a recipe")
 };
 
-exports.deleteAccout = (req, res, next) => {
+export const deleteAccout = (req, res, next) => {
     res.send("getting all a recipe")
 };

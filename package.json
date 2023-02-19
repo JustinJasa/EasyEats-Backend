@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Easy eats backend to the database and authentication",
   "main": "index.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "npx nodemon index.js"
   },

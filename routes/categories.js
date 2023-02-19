@@ -1,21 +1,23 @@
-const express = require("express");
-const controllers = require('../controllers')
-const router = express.Router();
+import express from 'express'
+import { getAllCategories } from '../controllers/index.js'
 
+const routerCategories = express.Router()
 
 // get all categories
-router.route("/").get((req, res) => {
-  res.send("getting all categories");
+routerCategories.route("/").get(async (req, res) => {
+    const queryResult = await getAllCategories()
+    console.log(queryResult)
+    res.send(queryResult)
 });
 
 // get a particular category
-router.route("/:id").get((req,res) => {
+routerCategories.route("/:id").get((req,res) => {
     let categoryId = req.params.id
     res.send(`getting category information for ${categoryId}`)
 })
 
 // create a new category and add to the categories
-router.route("/").post((req,res) => {
+routerCategories.route("/").post((req,res) => {
     res.send("created a new category")
     console.log(req.body)
     res.json({
@@ -23,4 +25,4 @@ router.route("/").post((req,res) => {
     })
 })
 
-module.exports = router;
+export default routerCategories
