@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllCategories } from '../controllers/index.js'
+import { getAllCategories } from '../controllers/queries.js'
 
 const routerCategories = express.Router()
 

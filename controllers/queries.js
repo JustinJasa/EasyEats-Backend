@@ -1,7 +1,7 @@
 //importing the database
 import pool from '../services/db.js'
 
-// get all categories
+// Get all categories
 export const getAllCategories = async () => {
     const [rows] = await pool.query(`
     SELECT name FROM categories`)
@@ -9,12 +9,12 @@ export const getAllCategories = async () => {
     return rows
 };
 
-// get a category
+// Get a category by its name
 export const getCategory = async () => {
     
 };
 
-// searching for recipe
+// Get a category by its ID
 export const setSearch = async () => {
     
 };
