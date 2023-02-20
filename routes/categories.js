@@ -6,7 +6,6 @@ const routerCategories = express.Router()
 // get all categories
 routerCategories.route("/").get(async (req, res) => {
     const queryResult = await getAllCategories()
-    console.log(queryResult)
     res.send(queryResult)
 });
 

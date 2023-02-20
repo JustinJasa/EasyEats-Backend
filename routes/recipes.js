@@ -1,11 +1,24 @@
 import express from 'express'
+import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName } from '../controllers/queries.js';
 
 const routerRecipes = express.Router();
 
-// get a particular recipe
-routerRecipes.route("/:id").get((req, res) => {
-  let receipeId = req.params.id;
-  res.send(`getting information for ${receipeId}`);
+// GET  ---  Get all recipes
+routerRecipes.route("/").get(async (req, res) => {
+  const queryResult = await getAllRecipes()
+  res.send(queryResult)
+});
+
+// GET  ---  Get recipes by categoryName
+routerRecipes.route("/category/:categoryName").get(async (req, res) => {
+  const queryResult = await getRecipesByCategoryName(req.params.categoryName)
+  res.send(queryResult)
+});
+
+// GET  ---  Get recipes by recipeName
+routerRecipes.route("/:recipeName").get(async (req, res) => {
+  const queryResult = await getRecipesByRecipeName(req.params.recipeName)
+  res.send(queryResult)
 });
 
 // modify all a recipe
