@@ -1,6 +1,6 @@
-const express = require("express")
-const categories = require("./routes/categories")
-const recipe = require('./routes/recipe')
+import express from 'express'
+import routerCategories from './routes/categories.js'
+import routerRecipes from './routes/recipes.js'
 
 const PORT = process.env.PORT || 8000
 
@@ -8,8 +8,8 @@ const app = express();
 
 app.use(express.json())
 
-app.use('/categories', categories)
-app.use('/recipe', recipe)
+app.use('/categories', routerCategories)
+app.use('/recipes', routerRecipes)
 
 
 app.get('/', (req, res) => {
