@@ -147,3 +147,26 @@ export const createRecipeSteps = async (recipeId, description) => {
     const id = result.insertId
     return getRecipeSteps(id)
 }
+
+// Insert steps of a recipe into steps table
+export const updateRecipeInfo = async (recipeId, name, description, time_h, time_m, price) => {
+    const [result] = await pool.query(`
+    UPDATE recipes
+    SET
+        name = ?,
+        description = ?,
+        time_hours = ?,
+        time_minutes = ?,
+        price_range = ?
+    WHERE recipe_id = ?`, [name, description, time_h, time_m, price, recipeId])
+
+    return getRecipeInfo(recipeId)
+}
+
+
+// Delete all categories of a recipe by recipeId
+export const deleteRecipeCategories = async (recipeId) => {
+    const [result] = await pool.query(`
+    DELETE FROM recipe_categories
+    WHERE recipe_id = ?`, [recipeId])
+}

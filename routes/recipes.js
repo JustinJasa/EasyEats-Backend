@@ -1,11 +1,14 @@
 import express from 'express'
 import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName, getRecipeInfo, getRecipeCategories, 
          getRecipeIngredients, getRecipeSteps, getRecipeComments, createRecipe, createRecipeCategories, 
-         createRecipeIngredients, createRecipeSteps } from '../controllers/queries.js';
+         createRecipeIngredients, createRecipeSteps, updateRecipeInfo, deleteRecipeCategories } from '../controllers/queries.js';
 
 const routerRecipes = express.Router();
 
-//  - - - - - GET - - - - -
+//  - - - - - - - - - - - - -
+//  - - - - - GET - - - - - -
+//  - - - - - - - - - - - - -
+
 // GET  ---  Get all recipes
 routerRecipes.route("/").get(async (req, res) => {
   const queryResult = await getAllRecipes()
@@ -54,8 +57,10 @@ routerRecipes.route("/:recipeId/comments").get(async (req, res) => {
   res.status(200).send(queryResult)
 });
 
-
+//  - - - - - - - - - - - - -
 //  - - - - - POST - - - - -
+//  - - - - - - - - - - - - -
+
 //  POST --- Insert a new recipe's basic info
 routerRecipes.route("/newRecipe").post(async (req, res) => {
   const { userId, name, description, time_h, time_m, price } = req.body
@@ -101,5 +106,36 @@ routerRecipes.route("/:recipeId/steps").post(async (req, res) => {
 
   res.status(200).send(`Added ${steps.length} steps to recipe ${recipeId}`)
 })
+
+//  - - - - - - - - - - - - -
+//  - - - - - PUT - - - - - -
+//  - - - - - - - - - - - - -
+
+// PUT  --- Update the basic info of a recipe
+routerRecipes.route("/:recipeId/basicInfo").put(async (req, res) => {
+  const recipeId = req.params.recipeId
+  const { name, description, time_h, time_m, price } = req.body
+  const queryResult = await updateRecipeInfo(recipeId, name, description, time_h, time_m, price)
+
+  res.status(200).send(queryResult)
+})
+
+// PUT  --- Update the categories of a recipe
+routerRecipes.route("/:recipeId/categories").put(async (req, res) => {
+  const recipeId = req.params.recipeId
+  const { categories } = req.body
+  
+  // Clear categories for current recipe
+  deleteRecipeCategories(recipeId)
+
+  // Then add the new ones
+  for(let i = 0; i < categories.length; i++) {
+    const categoryId = categories[i]
+    const queryResult = await createRecipeCategories(recipeId, categoryId)
+  }
+  res.status(200).send(`Recipe ${recipeId} now has ${categories.length} categories`)
+})
+
+
 
 export default routerRecipes
