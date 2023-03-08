@@ -21,7 +21,7 @@ app.listen(PORT, () => {
 });
 
 app.use((err, req, res) => { 
-    console.log(error)
+    console.log(err)
     res.status(500).send("Something Broke!")
 })
 

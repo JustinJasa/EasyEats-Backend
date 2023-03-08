@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: easy_eats_backend
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    networks:
+      - appnet
+    environment:
+      DB_HOST: database,
+      DB_USER: root,
+      DB_PASSWORD: 12345
+      DB_NAME: easy_eats
+  database:
+    container_name: easy_eats_database
+    build: ./database
+    ports:
+      - "3333:3333"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345,
+      MYSQL_DATABASE: easy_eats,
+      MYSQL_USER: root,
+    networks:
+      - appnet
+
+networks:
+  appnet:
+
+volumes:
+  dbdata:
+
+
+
+
