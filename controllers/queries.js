@@ -163,10 +163,21 @@ export const updateRecipeInfo = async (recipeId, name, description, time_h, time
     return getRecipeInfo(recipeId)
 }
 
-
 // Delete all categories of a recipe by recipeId
 export const deleteRecipeCategories = async (recipeId) => {
     const [result] = await pool.query(`
     DELETE FROM recipe_categories
+    WHERE recipe_id = ?`, [recipeId])
+}
+
+export const deleteRecipeIngredients = async (recipeId) => {
+    const [result] = await pool.query(`
+    DELETE FROM ingredients
+    WHERE recipe_id = ?`, [recipeId])
+}
+
+export const deleteRecipeSteps = async (recipeId) => {
+    const [result] = await pool.query(`
+    DELETE FROM steps
     WHERE recipe_id = ?`, [recipeId])
 }

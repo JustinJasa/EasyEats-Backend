@@ -1,7 +1,8 @@
 import express from 'express'
 import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName, getRecipeInfo, getRecipeCategories, 
          getRecipeIngredients, getRecipeSteps, getRecipeComments, createRecipe, createRecipeCategories, 
-         createRecipeIngredients, createRecipeSteps, updateRecipeInfo, deleteRecipeCategories } from '../controllers/queries.js';
+         createRecipeIngredients, createRecipeSteps, updateRecipeInfo, deleteRecipeCategories, deleteRecipeIngredients,
+         deleteRecipeSteps } from '../controllers/queries.js';
 
 const routerRecipes = express.Router();
 
@@ -136,6 +137,36 @@ routerRecipes.route("/:recipeId/categories").put(async (req, res) => {
   res.status(200).send(`Recipe ${recipeId} now has ${categories.length} categories`)
 })
 
+// PUT  --- Update the ingredients of a recipe
+routerRecipes.route("/:recipeId/ingredients").put(async (req, res) => {
+  const recipeId = req.params.recipeId
+  const { ingredients } = req.body
 
+  // Delete ingredients from ingredients table
+  deleteRecipeIngredients(recipeId)
+
+  // Then add the new ones
+  for(let i = 0; i < ingredients.length; i++) {
+    const ingredientId = ingredient[i]
+    const queryResult = await createRecipeIngredients(recipeId, ingredientId)
+  }
+  res.status(200).send(`Recipe ${recipeId} now has ${ingredients.length} ingredients`)
+})
+
+// PUT  --- Update the steps of a recipe
+routerRecipes.route("/:recipeId/steps").put(async (req, res) => {
+  const recipeId = req.params.recipeId
+  const { steps } = req.body
+
+  // Delete ingredients from ingredients table
+  deleteRecipeSteps(recipeId)
+
+  // Then add the new ones
+  for(let i = 0; i < steps.length; i++) {
+    const stepId = steps[i]
+    const queryResult = await createRecipeSteps(recipeId, stepId)
+  }
+  res.status(200).send(`Recipe ${recipeId} now has ${steps.length} steps`)
+})
 
 export default routerRecipes
