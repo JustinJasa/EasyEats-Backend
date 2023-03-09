@@ -15,6 +15,8 @@ services:
       DB_USER: root,
       DB_PASSWORD: 12345
       DB_NAME: easy_eats
+    volumes:
+      - ./backend/src/:/backend/src/
   database:
     container_name: easy_eats_database
     build: ./database
@@ -30,8 +32,6 @@ services:
 networks:
   appnet:
 
-volumes:
-  dbdata:
 
 
 
