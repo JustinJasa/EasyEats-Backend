@@ -14,7 +14,7 @@ CREATE TABLE recipes(
     time_minutes INT,
     price_range VARCHAR(3), -- Can be $, $$, or $$$
 
-    FOREIGN KEY (user_id) REFERENCES users (user_id)
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 CREATE TABLE ingredients(
@@ -22,7 +22,7 @@ CREATE TABLE ingredients(
     recipe_id INT,
     description VARCHAR(255),
 
-    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
+    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 CREATE TABLE steps(
@@ -30,7 +30,7 @@ CREATE TABLE steps(
     recipe_id INT,
     description VARCHAR(512),
 
-    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
+    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 CREATE TABLE categories(
@@ -43,7 +43,7 @@ CREATE TABLE recipe_categories(
     category_id INT,
 
     PRIMARY KEY (recipe_id, category_id),
-    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
+    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (category_id) REFERENCES categories (category_id)
 );
 
@@ -54,8 +54,8 @@ CREATE TABLE comments(
     comment VARCHAR(1024),
     rating INT, -- between 1-5
 
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
-    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 -- //////////////

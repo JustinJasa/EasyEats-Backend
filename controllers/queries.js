@@ -38,7 +38,7 @@ export const getRecipesByRecipeName = async (recipeName) => {
     SELECT r.recipe_id, r.name, u.username
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
-    WHERE r.name LIKE '%?%'`, [recipeName])
+    WHERE r.name LIKE ?`, ['%' + recipeName + '%'])
 
     return rows
 }
@@ -46,7 +46,7 @@ export const getRecipesByRecipeName = async (recipeName) => {
 // Get info (name, description, username, price_range) of a single recipe by recipe_id
 export const getRecipeInfo = async (recipeId) => {
     const [row] = await pool.query(`
-    SELECT r.name, r.description, u.username, r.time_hours, r.time_minutes, r.price_range
+    SELECT r.recipe_id, r.name, r.description, u.username, r.time_hours, r.time_minutes, r.price_range
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     WHERE r.recipe_id = ?`, [recipeId])
@@ -89,7 +89,7 @@ export const getRecipeSteps = async (recipeId) => {
 // Get comments of a recipe by recipe_id
 export const getRecipeComments = async (recipeId) => {
     const [rows] = await pool.query(`
-    SELECT c.comment_id, u.username, c.comment, c.rating
+    SELECT c.comment_id, u.user_id, u.username, c.comment, c.rating
     FROM recipes r
     INNER JOIN comments c ON r.recipe_id = c.recipe_id
     INNER JOIN users u ON c.user_id = u.user_id
@@ -104,13 +104,24 @@ export const getComment = async (commentId) => {
     SELECT *
     FROM comments c
     WHERE c.comment_id = ?`, [commentId])
+
+    return result
+}
+
+// Get all users
+export const getAllUsers = async () => {
+    const [rows] = await pool.query(`
+    SELECT *
+    FROM users`)
+
+    return rows
 }
 
 // Get user information by user_id
-export const getUserInfo = async (userId) => {
+export const getUser = async (userId) => {
     const [row] = await pool.query(`
     SELECT *
-    FROM users
+    FROM users u
     WHERE u.user_id = ?`, [userId])
 
     return row
@@ -173,7 +184,7 @@ export const createUser = async (username, email, password) => {
     VALUES (?, ?, ?)`, [username, email, password])
 
     const id = result.insertId
-    return getUserInfo(id)
+    return getUser(id)
 }
 
 // Update basic info of a recipe in recipes table
@@ -212,17 +223,32 @@ export const updateUser = async (userId, username, password) => {
         password = ?
     WHERE user_id = ?`, [username, password, userId])
 
-    return getUserInfo(userId)
+    return getUser(userId)
 }
 
-// Delete a recipe from recipes table. Also deletes its associated comments in comments table
+// Delete a recipe from recipes table. Also deletes its associated categories, ingredients, steps, and comments
 export const deleteRecipe = async (recipeId) => {
-    // First delete comments from comments table
+    // First, delete associated categories from recipe_categories table
+    const [resultDelCategories] = await pool.query(`
+    DELETE FROM recipe_categories
+    WHERE recipe_id = ?`, [recipeId])
+
+    // Then delete ingredients from ingredients table
+    const [resultDelIngredients] = await pool.query(`
+    DELETE FROM ingredients
+    WHERE recipe_id = ?`, [recipeId])
+
+    // Then delete steps from steps table
+    const[resultDelSteps] = await pool.query(`
+    DELETE FROM steps
+    WHERE recipe_id = ?`, [recipeId])
+    
+    // Then delete comments from comments table
     const [resultDelComments] = await pool.query(`
     DELETE FROM comments
     WHERE recipe_id = ?`, [recipeId])
 
-    // Then delete recipe from recipes table
+    // Finally, delete recipe from recipes table
     const [resultDelRecipe] = await pool.query(`
     DELETE FROM recipes
     WHERE recipe_id = ?`, [recipeId])
@@ -250,7 +276,7 @@ export const deleteUser = async (userId) => {
 
     // Iterate over user's recipes and delete them
     for(let i = 0; i< userRecipes.length; i++) {
-        const recipeId = userRecipes[i]
+        const recipeId = userRecipes[i].recipe_id
         deleteRecipe(recipeId)
     }
 
