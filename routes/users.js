@@ -1,5 +1,8 @@
 import express from 'express'
+import bcrypt from 'bcrypt'
 import { getAllUsers, getUser, createUser, updateUser, deleteUser } from '../controllers/queries.js'
+
+const {genSaltSync, hashSync} = bcrypt
 
 const routerUsers = express.Router()
 
@@ -26,7 +29,9 @@ routerUsers.route("/:userId").get(async (req, res) => {
 
 // POST  ---  Insert a new user
 routerUsers.route("/new").post(async (req, res) => {
-    const { username, email, password } = req.body
+    let { username, email, password } = req.body
+    const salt = genSaltSync(10)
+    password = hashSync(password,salt)
     const queryResult = await createUser(username, email, password)
     res.status(200).send(queryResult)
 });
