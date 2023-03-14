@@ -15,9 +15,13 @@ routerUsers.route("/all").get(async (req, res) => {
 
 // GET  ---  Get a single user by userId
 routerUsers.route("/:userId").get(async (req, res) => {
-    const userId = req.params.userId
-    const queryResult = await getUser(userId)
-    res.status(200).send(queryResult)
+    try {
+        const userId = req.params.userId
+        const queryResult = await getUser(userId)
+        res.status(200).send(queryResult)
+    } catch(error) {
+        res.status(500).send("Error:" + error)
+    }
 });
 
 //  - - - - - - - - - - - - -

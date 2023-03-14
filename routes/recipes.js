@@ -31,38 +31,62 @@ routerRecipes.route("/name/:recipeName").get(async (req, res) => {
 
 // GET  --- Get recipe basic info by recipeId
 routerRecipes.route("/:recipeId").get(async (req, res) => {
-  const queryResult = await getRecipeInfo(req.params.recipeId)
-  res.status(200).send(queryResult)
+  try {
+    const queryResult = await getRecipeInfo(req.params.recipeId)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
 });
 
 // GET  --- Get recipe categories by recipeId
 routerRecipes.route("/:recipeId/categories").get(async (req, res) => {
-  const queryResult = await getRecipeCategories(req.params.recipeId)
-  res.status(200).send(queryResult)
+  try {
+    const queryResult = await getRecipeCategories(req.params.recipeId)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
 });
 
 // GET  --- Get recipe ingredients by recipeId
 routerRecipes.route("/:recipeId/ingredients").get(async (req, res) => {
-  const queryResult = await getRecipeIngredients(req.params.recipeId)
-  res.status(200).send(queryResult)
+  try {
+    const queryResult = await getRecipeIngredients(req.params.recipeId)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
 });
 
 // GET  --- Get recipe steps by recipeId
 routerRecipes.route("/:recipeId/steps").get(async (req, res) => {
-  const queryResult = await getRecipeSteps(req.params.recipeId)
-  res.status(200).send(queryResult)
+  try {
+    const queryResult = await getRecipeSteps(req.params.recipeId)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
 });
 
 //  GET --- Get recipe comments by recipeId
 routerRecipes.route("/:recipeId/comments/all").get(async (req, res) => {
-  const queryResult = await getRecipeComments(req.params.recipeId)
-  res.status(200).send(queryResult)
+  try {
+    const queryResult = await getRecipeComments(req.params.recipeId)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
 });
 
 //  GET --- Get a recipe's comment by its id
 routerRecipes.route("/:recipeId/comments/:commentId").get(async (req, res) => {
-  const queryResult = await getComment(req.params.commentId)
-  res.status(200).send(queryResult)
+  try {
+    const queryResult = await getComment(req.params.commentId)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
 })
 
 //  - - - - - - - - - - - - -

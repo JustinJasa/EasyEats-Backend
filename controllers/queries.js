@@ -6,6 +6,11 @@ export const getAllCategories = async () => {
     const [rows] = await pool.query(`
     SELECT name FROM categories`)
 
+    // Throw an error if the query result is empty
+    if(!rows.length) {
+        throw new Error("Cannot fetch categories")
+    }
+
     return rows
 };
 
@@ -51,11 +56,31 @@ export const getRecipeInfo = async (recipeId) => {
     INNER JOIN recipes r ON u.user_id = r.user_id
     WHERE r.recipe_id = ?`, [recipeId])
 
+    // Throw an error if the query result is empty (recipeId does not exist in recipes table)
+    if(!row.length) {
+        throw new Error("Recipe does not exist")
+    }
+
     return row
+}
+
+// INTERNAL FUNCTION - CHECKS IF RECIPE EXISTS
+const recipeExists = async (recipeId) => {
+    const [row] = await pool.query(`
+    SELECT *
+    FROM recipes r
+    WHERE r.recipe_id = ?`, [recipeId])
+
+    return row.length === 0
 }
 
 // Get categories of a recipe by recipe_id
 export const getRecipeCategories = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT c.name
     FROM recipes r
@@ -68,6 +93,11 @@ export const getRecipeCategories = async (recipeId) => {
 
 // Get ingredients of a recipe by recipe_id
 export const getRecipeIngredients = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT i.description
     FROM ingredients i
@@ -78,6 +108,11 @@ export const getRecipeIngredients = async (recipeId) => {
 
 // Get steps of a recipe by recipe_id
 export const getRecipeSteps = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT s.description
     FROM steps s
@@ -88,6 +123,11 @@ export const getRecipeSteps = async (recipeId) => {
 
 // Get comments of a recipe by recipe_id
 export const getRecipeComments = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT c.comment_id, u.user_id, u.username, c.comment, c.rating
     FROM recipes r
@@ -104,6 +144,11 @@ export const getComment = async (commentId) => {
     SELECT *
     FROM comments c
     WHERE c.comment_id = ?`, [commentId])
+
+    // Throw error if comment does not exist
+    if(!result.length) {
+        throw new Error("Comment does not exist")
+    }
 
     return result
 }
@@ -123,6 +168,11 @@ export const getUser = async (userId) => {
     SELECT *
     FROM users u
     WHERE u.user_id = ?`, [userId])
+
+    // Throw error if user does not exist
+    if(!row.length) {
+        throw new Error("User does not exist")
+    }
 
     return row
 }
