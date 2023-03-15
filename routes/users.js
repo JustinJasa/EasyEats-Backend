@@ -1,8 +1,6 @@
 import express from 'express'
-import bcrypt from 'bcrypt'
-import { getAllUsers, getUser, createUser, updateUser, deleteUser } from '../controllers/queries.js'
+import { getAllUsers, getUser, getUserByEmail, createUser, updateUser, deleteUser } from '../controllers/queries.js'
 
-const {genSaltSync, hashSync} = bcrypt
 
 const routerUsers = express.Router()
 
@@ -20,6 +18,13 @@ routerUsers.route("/all").get(async (req, res) => {
 routerUsers.route("/:userId").get(async (req, res) => {
     const userId = req.params.userId
     const queryResult = await getUser(userId)
+    res.status(200).send(queryResult)
+});
+
+// GET  ---  Get a single user by Email
+routerUsers.route("/email/:email").get(async (req, res) => {
+    const email = req.params.email
+    const queryResult = await getUserByEmail(email)
     res.status(200).send(queryResult)
 });
 
@@ -45,7 +50,7 @@ routerUsers.route("/new").post(async (req, res) => {
 routerUsers.route("/:userId/edit").put(async (req, res) => {
     const userId = req.params.userId
     const { username, password } = req.body
-    const queryResult = await updateUser(userId, username, password)
+    const queryResult = await getUserByEmail(userId, username, password)
     res.status(200).send(queryResult)
 });
 

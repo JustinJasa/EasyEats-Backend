@@ -2,6 +2,7 @@ import express from 'express'
 import routerCategories from './routes/categories.js'
 import routerRecipes from './routes/recipes.js'
 import routerUsers from './routes/users.js'
+import routerAuth from './routes/auth.js'
 import cors from 'cors'
 
 const PORT = process.env.PORT || 8000
@@ -14,6 +15,7 @@ app.use(express.json())
 app.use('/categories', routerCategories)
 app.use('/recipes', routerRecipes)
 app.use('/users', routerUsers)
+app.use('/auth', routerAuth)
 
 
 app.get('/', (req, res) => {
