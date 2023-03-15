@@ -11,13 +11,15 @@ routerAuth.post("/login", async (req, res) => {
      // takes an email and password as a request
     const { email, password } = req.body;
     //checks if the email exists in database
+
+    console.log(password)
     const account = await getUserByEmail(email);
     if (account.length == 0) {
       res.status(401).json("Email is incorrect");
     }
 
     //if user exists - compares password
-    const isValid = compare(password, account.map((data) => data.password).toString());
+    const isValid = await compare(password, account[0].password);
     if (!isValid) {
       res.status(401).json("Password is incorrect");
     }
