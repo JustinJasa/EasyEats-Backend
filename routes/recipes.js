@@ -3,7 +3,22 @@ import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName, getRec
          getRecipeIngredients, getRecipeSteps, getRecipeComments, createRecipe, createRecipeCategories, 
          createRecipeIngredients, createRecipeSteps, updateRecipeInfo, deleteRecipeCategories, deleteRecipeIngredients,
          deleteRecipeSteps, deleteRecipe, deleteComment, updateComment, createComment,
-         getComment} from '../controllers/queries.js';
+         getComment, createRecipeImage, getRecipeImages, getRecipeImage, deleteRecipeImages} from '../controllers/queries.js';
+import multer from 'multer'
+import * as path from 'path'
+import { fileURLToPath } from 'url'
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, "./public/images")
+  },
+  filename: (req, file, cb) => {
+      console.log(file)
+      cb(null, Date.now() + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({storage: storage})
 
 const routerRecipes = express.Router()
 
@@ -38,6 +53,34 @@ routerRecipes.route("/:recipeId").get(async (req, res) => {
     res.status(500).send("Error:" + error)
   }
 });
+
+// GET  --- Get recipe images by recipeId
+routerRecipes.get("/:recipeId/images", async (req, res) => {
+  try {
+    const recipeId = req.params.recipeId
+    const queryResult = await getRecipeImages(recipeId)
+    console.log(queryResult)
+    res.status(200).send(queryResult)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
+})
+
+// GET  --- Get recipe image by imageId
+routerRecipes.get("/:recipeId/images/:imageId", async (req, res) => {
+  try {
+    const imageId = req.params.imageId
+    const result = await getRecipeImage(imageId)
+    
+    // console.log(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + result[0].path)
+    
+    // dirname path is <path_to_folder>/Easy-Eats-Backend/routes
+    // Used .slice(0, -6) to remove the /routes from the path, and append to it /public/images/:imageName
+    res.sendFile(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + result[0].path)
+  } catch(error) {
+    res.status(500).send("Error:" + error)
+  }
+})
 
 // GET  --- Get recipe categories by recipeId
 routerRecipes.route("/:recipeId/categories").get(async (req, res) => {
@@ -101,6 +144,21 @@ routerRecipes.route("/new").post(async (req, res) => {
   res.status(200).send(queryResult)
 })
 
+// POST  --- Insert a recipe's images
+routerRecipes.post("/:recipeId/images/new", upload.array("images"), async (req, res) => {
+  const recipeId = req.params.recipeId
+
+  // If req.files contains images (is not undefined), then add them to the database
+  if(req.files !== undefined) {
+    // Iterate through images and insert each one
+    for(let i = 0; i < req.files.length; i++) {
+      const result = await createRecipeImage(recipeId, req.files[i].filename, req.files[i].path)
+      console.log(result)
+    }
+  }
+  res.status(200).send(`Added ${req.files.length} images to recipe ${recipeId}`)
+})
+
 //  POST --- Insert a recipe's categories
 routerRecipes.route("/:recipeId/categories/new").post(async (req, res) => {
   const recipeId = req.params.recipeId
@@ -160,6 +218,25 @@ routerRecipes.route("/:recipeId/edit").put(async (req, res) => {
   const queryResult = await updateRecipeInfo(recipeId, name, description, time_h, time_m, price)
 
   res.status(200).send(queryResult)
+})
+
+// PUT  --- Update the images of a recipe
+routerRecipes.put("/:recipeId/images/edit", upload.array("images"), async (req, res) => {
+  const recipeId = req.params.recipeId
+
+  // Clear images for current recipe
+  deleteRecipeImages(recipeId)
+
+  if(req.files !== undefined) {
+    // Iterate through images and insert each one
+    for(let i = 0; i < req.files.length; i++) {
+      // console.log(req.files[i].originalname, req.files[i].filename, req.files[i].path)
+      const result = await createRecipeImage(recipeId, req.files[i].filename, req.files[i].path)
+      console.log(result)
+    }
+  }
+
+  res.status(200).send(`Recipe ${recipeId} now has ${req.files !== undefined ? req.files.length : 0} images`)
 })
 
 // PUT  --- Update the categories of a recipe

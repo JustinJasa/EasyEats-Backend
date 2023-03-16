@@ -2,7 +2,9 @@ CREATE TABLE users(
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255),
     email VARCHAR(255),
-    password VARCHAR(255)
+    password VARCHAR(255),
+    picture_name VARCHAR(255),
+    picture_path VARCHAR(255)
 );
 
 CREATE TABLE recipes(
@@ -15,6 +17,15 @@ CREATE TABLE recipes(
     price_range VARCHAR(3), -- Can be $, $$, or $$$
 
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE NO ACTION
+);
+
+CREATE TABLE images(
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    recipe_id INT,
+    name VARCHAR(255),
+    path VARCHAR(255),
+
+    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 CREATE TABLE ingredients(

@@ -74,6 +74,34 @@ const recipeExists = async (recipeId) => {
     return row.length === 0
 }
 
+// Get images of a recipe by recipe_id
+export const getRecipeImages = async (recipeId) => {
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
+    const [rows] = await pool.query(`
+    SELECT image_id, name, path
+    FROM images
+    WHERE recipe_id = ?`, [recipeId])
+
+    return rows
+}
+
+// Get image of a recipe by recipe_id and image_id
+export const getRecipeImage = async (imageId) => {
+    const [row] = await pool.query(`
+    SELECT image_id, name, path
+    FROM images
+    WHERE image_id = ?`, [imageId])
+
+    if(!row.length) {
+        throw new Error("Image does not exist")
+    }
+
+    return row
+}
+
 // Get categories of a recipe by recipe_id
 export const getRecipeCategories = async (recipeId) => {
     // Throw an error if recipe does not exist
@@ -187,6 +215,16 @@ export const createRecipe = async (userId, name, description, time_h, time_m, pr
     return getRecipeInfo(id)
 }
 
+// Insert an image of a recipe to images table
+export const createRecipeImage = async (recipeId, imageName, imagePath) => {
+    const [row] = await pool.query(`
+    INSERT INTO images (recipe_id, name, path)
+    VALUES (?, ?, ?)`, [recipeId, imageName, imagePath])
+
+    const id = row.insertId
+    return getRecipeImage(id)
+}
+
 // Insert categories of a recipe into recipe_categories table
 export const createRecipeCategories = async (recipeId, categoryId) => {
     const [result] = await pool.query(`
@@ -276,9 +314,14 @@ export const updateUser = async (userId, username, password) => {
     return getUser(userId)
 }
 
-// Delete a recipe from recipes table. Also deletes its associated categories, ingredients, steps, and comments
+// Delete a recipe from recipes table. Also deletes its associated images, categories, ingredients, steps, and comments
 export const deleteRecipe = async (recipeId) => {
-    // First, delete associated categories from recipe_categories table
+    // First, delete associated images from images table
+    const [resultDelImages] = await pool.query(`
+    DELETE FROM images
+    WHERE recipe_id = ?`, [recipeId])
+    
+    // Then delete associated categories from recipe_categories table
     const [resultDelCategories] = await pool.query(`
     DELETE FROM recipe_categories
     WHERE recipe_id = ?`, [recipeId])
@@ -334,6 +377,13 @@ export const deleteUser = async (userId) => {
     const [resultDelUser] = await pool.query(`
     DELETE FROM users
     WHERE user_id = ?`, [userId])
+}
+
+// Delete all images of a recipe by recipeId
+export const deleteRecipeImages = async (recipeId) => {
+    const [result] = await pool.query(`
+    DELETE FROM images
+    WHERE recipe_id = ?`, [recipeId])
 }
 
 // Delete all categories of a recipe by recipeId
