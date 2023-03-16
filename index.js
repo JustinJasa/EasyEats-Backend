@@ -15,7 +15,7 @@ app.use(express.json())
 
 app.use('/categories', checkJwt, routerCategories)
 app.use('/recipes',  checkJwt, routerRecipes)
-app.use('/users',  checkJwt, routerUsers,)
+app.use('/users',  checkJwt, routerUsers)
 app.use('/auth', routerAuth)
 
 

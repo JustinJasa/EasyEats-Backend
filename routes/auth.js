@@ -8,6 +8,8 @@ const routerAuth = express.Router()
 // authenticates user
 routerAuth.post("/login", async (req, res) => {
   try {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
      // takes an email and password as a request
     const { email, password } = req.body;
     //checks if the email exists in database
@@ -20,13 +22,14 @@ routerAuth.post("/login", async (req, res) => {
 
     //if user exists - compares password
     const isValid = await compare(password, account[0].password);
+    console.log(isValid)
     if (!isValid) {
       res.status(401).json("Password is incorrect");
     }
 
     // if credentials are correct sends back a json web toket
     const token = jwt.sign({ id: account.id }, 'cat123', { expiresIn: "1h" });
-    res.status(200).json({ success:1, message:"login successful", token });
+    res.status(200).json({ success:1, message:"login successful", token, account });
   } 
   // catches any random errors
   catch (error) {
@@ -40,6 +43,8 @@ routerAuth.post("/login", async (req, res) => {
 
 routerAuth.post("/signup", async (req, res) => {
   try{ 
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     let { username, email, password } = req.body;
 
     // check if account exists in database
