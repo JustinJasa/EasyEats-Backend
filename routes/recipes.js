@@ -7,6 +7,7 @@ import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName, getRec
 import multer from 'multer'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
+import { unlinkSync } from 'fs';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -224,6 +225,19 @@ routerRecipes.route("/:recipeId/edit").put(async (req, res) => {
 routerRecipes.put("/:recipeId/images/edit", upload.array("images"), async (req, res) => {
   const recipeId = req.params.recipeId
 
+  // Get the paths for the images to delete the files locally /public/images
+  const images = await getRecipeImages(recipeId)
+
+  // Delete the files for the images locally
+  for(let i = 0; i < images.length; i++) {
+    // console.log(images[i].path)
+    try {
+      unlinkSync(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + images[i].path)
+    } catch(error) {
+      res.status(500).send(error)
+    }
+  }
+
   // Clear images for current recipe
   deleteRecipeImages(recipeId)
 
@@ -232,7 +246,6 @@ routerRecipes.put("/:recipeId/images/edit", upload.array("images"), async (req, 
     for(let i = 0; i < req.files.length; i++) {
       // console.log(req.files[i].originalname, req.files[i].filename, req.files[i].path)
       const result = await createRecipeImage(recipeId, req.files[i].filename, req.files[i].path)
-      console.log(result)
     }
   }
 
@@ -303,6 +316,19 @@ routerRecipes.route("/:recipeId/comments/:commentId/edit").put(async (req, res) 
 // DELETE --- Delete a recipe
 routerRecipes.route("/:recipeId/delete").delete(async (req, res) => {
   const recipeId = req.params.recipeId
+
+  // Get the paths for the images to delete the files locally /public/images
+  const images = await getRecipeImages(recipeId)
+
+  // Delete the files for the images locally
+  for(let i = 0; i < images.length; i++) {
+    // console.log(images[i].path)
+    try {
+      unlinkSync(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + images[i].path)
+    } catch(error) {
+      res.status(500).send(error)
+    }
+  }
 
   deleteRecipe(recipeId)
 

@@ -17,7 +17,7 @@ export const getAllCategories = async () => {
 // Get basic info (recipeName, user) of ALL recipes
 export const getAllRecipes = async () => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username
+    SELECT r.recipe_id, r.name, u.username, u.picture_path
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id`)
     
@@ -27,7 +27,7 @@ export const getAllRecipes = async () => {
 // Get basic info (recipeName, user) of recipes by categoryName
 export const getRecipesByCategoryName = async (categoryName) => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username
+    SELECT r.recipe_id, r.name, u.username, u.picture_path
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     INNER JOIN recipe_categories rc ON r.recipe_id = rc.recipe_id
@@ -40,7 +40,7 @@ export const getRecipesByCategoryName = async (categoryName) => {
 // Get basic info (recipeName, user) of recipes by recipeName
 export const getRecipesByRecipeName = async (recipeName) => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username
+    SELECT r.recipe_id, r.name, u.username, u.picture_path
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     WHERE r.name LIKE ?`, ['%' + recipeName + '%'])
@@ -51,7 +51,7 @@ export const getRecipesByRecipeName = async (recipeName) => {
 // Get info (name, description, username, price_range) of a single recipe by recipe_id
 export const getRecipeInfo = async (recipeId) => {
     const [row] = await pool.query(`
-    SELECT r.recipe_id, r.name, r.description, u.username, r.time_hours, r.time_minutes, r.price_range
+    SELECT r.recipe_id, r.name, r.description, u.username, u.picture_path, r.time_hours, r.time_minutes, r.price_range
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     WHERE r.recipe_id = ?`, [recipeId])
