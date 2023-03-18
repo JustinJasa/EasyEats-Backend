@@ -127,6 +127,16 @@ export const getUser = async (userId) => {
     return row
 }
 
+// Get user by email
+export const getUserByEmail = async (email) => {
+    const [row] = await pool.query(`
+    SELECT *
+    FROM users u
+    WHERE u.email = ?`, [email])
+
+    return row
+}
+
 // Insert basic info of a recipe into recipes table
 export const createRecipe = async (userId, name, description, time_h, time_m, price) => {
     const [result] = await pool.query(`
