@@ -6,13 +6,18 @@ export const getAllCategories = async () => {
     const [rows] = await pool.query(`
     SELECT name FROM categories`)
 
+    // Throw an error if the query result is empty
+    if(!rows.length) {
+        throw new Error("Cannot fetch categories")
+    }
+
     return rows
 };
 
 // Get basic info (recipeName, user) of ALL recipes
 export const getAllRecipes = async () => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username
+    SELECT r.recipe_id, r.name, u.username, u.picture_path
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id`)
     
@@ -22,7 +27,7 @@ export const getAllRecipes = async () => {
 // Get basic info (recipeName, user) of recipes by categoryName
 export const getRecipesByCategoryName = async (categoryName) => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username
+    SELECT r.recipe_id, r.name, u.username, u.picture_path
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     INNER JOIN recipe_categories rc ON r.recipe_id = rc.recipe_id
@@ -35,7 +40,7 @@ export const getRecipesByCategoryName = async (categoryName) => {
 // Get basic info (recipeName, user) of recipes by recipeName
 export const getRecipesByRecipeName = async (recipeName) => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username
+    SELECT r.recipe_id, r.name, u.username, u.picture_path
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     WHERE r.name LIKE ?`, ['%' + recipeName + '%'])
@@ -46,16 +51,64 @@ export const getRecipesByRecipeName = async (recipeName) => {
 // Get info (name, description, username, price_range) of a single recipe by recipe_id
 export const getRecipeInfo = async (recipeId) => {
     const [row] = await pool.query(`
-    SELECT r.recipe_id, r.name, r.description, u.username, r.time_hours, r.time_minutes, r.price_range
+    SELECT r.recipe_id, r.name, r.description, u.username, u.picture_path, r.time_hours, r.time_minutes, r.price_range
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     WHERE r.recipe_id = ?`, [recipeId])
+
+    // Throw an error if the query result is empty (recipeId does not exist in recipes table)
+    if(!row.length) {
+        throw new Error("Recipe does not exist")
+    }
+
+    return row
+}
+
+// INTERNAL FUNCTION - CHECKS IF RECIPE EXISTS
+const recipeExists = async (recipeId) => {
+    const [row] = await pool.query(`
+    SELECT *
+    FROM recipes r
+    WHERE r.recipe_id = ?`, [recipeId])
+
+    return row.length === 0
+}
+
+// Get images of a recipe by recipe_id
+export const getRecipeImages = async (recipeId) => {
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
+    const [rows] = await pool.query(`
+    SELECT image_id, name, path
+    FROM images
+    WHERE recipe_id = ?`, [recipeId])
+
+    return rows
+}
+
+// Get image of a recipe by recipe_id and image_id
+export const getRecipeImage = async (imageId) => {
+    const [row] = await pool.query(`
+    SELECT image_id, name, path
+    FROM images
+    WHERE image_id = ?`, [imageId])
+
+    if(!row.length) {
+        throw new Error("Image does not exist")
+    }
 
     return row
 }
 
 // Get categories of a recipe by recipe_id
 export const getRecipeCategories = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT c.name
     FROM recipes r
@@ -68,6 +121,11 @@ export const getRecipeCategories = async (recipeId) => {
 
 // Get ingredients of a recipe by recipe_id
 export const getRecipeIngredients = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT i.description
     FROM ingredients i
@@ -78,6 +136,11 @@ export const getRecipeIngredients = async (recipeId) => {
 
 // Get steps of a recipe by recipe_id
 export const getRecipeSteps = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT s.description
     FROM steps s
@@ -88,6 +151,11 @@ export const getRecipeSteps = async (recipeId) => {
 
 // Get comments of a recipe by recipe_id
 export const getRecipeComments = async (recipeId) => {
+    // Throw an error if recipe does not exist
+    if(!recipeExists(recipeId)) {
+        throw new Error("Recipe does not exist")
+    }
+
     const [rows] = await pool.query(`
     SELECT c.comment_id, u.user_id, u.username, c.comment, c.rating
     FROM recipes r
@@ -104,6 +172,11 @@ export const getComment = async (commentId) => {
     SELECT *
     FROM comments c
     WHERE c.comment_id = ?`, [commentId])
+
+    // Throw error if comment does not exist
+    if(!result.length) {
+        throw new Error("Comment does not exist")
+    }
 
     return result
 }
@@ -123,6 +196,11 @@ export const getUser = async (userId) => {
     SELECT *
     FROM users u
     WHERE u.user_id = ?`, [userId])
+
+    // Throw error if user does not exist
+    if(!row.length) {
+        throw new Error("User does not exist")
+    }
 
     return row
 }
@@ -145,6 +223,16 @@ export const createRecipe = async (userId, name, description, time_h, time_m, pr
 
     const id = result.insertId
     return getRecipeInfo(id)
+}
+
+// Insert an image of a recipe to images table
+export const createRecipeImage = async (recipeId, imageName, imagePath) => {
+    const [row] = await pool.query(`
+    INSERT INTO images (recipe_id, name, path)
+    VALUES (?, ?, ?)`, [recipeId, imageName, imagePath])
+
+    const id = row.insertId
+    return getRecipeImage(id)
 }
 
 // Insert categories of a recipe into recipe_categories table
@@ -236,9 +324,14 @@ export const updateUser = async (userId, username, password) => {
     return getUser(userId)
 }
 
-// Delete a recipe from recipes table. Also deletes its associated categories, ingredients, steps, and comments
+// Delete a recipe from recipes table. Also deletes its associated images, categories, ingredients, steps, and comments
 export const deleteRecipe = async (recipeId) => {
-    // First, delete associated categories from recipe_categories table
+    // First, delete associated images from images table
+    const [resultDelImages] = await pool.query(`
+    DELETE FROM images
+    WHERE recipe_id = ?`, [recipeId])
+    
+    // Then delete associated categories from recipe_categories table
     const [resultDelCategories] = await pool.query(`
     DELETE FROM recipe_categories
     WHERE recipe_id = ?`, [recipeId])
@@ -294,6 +387,13 @@ export const deleteUser = async (userId) => {
     const [resultDelUser] = await pool.query(`
     DELETE FROM users
     WHERE user_id = ?`, [userId])
+}
+
+// Delete all images of a recipe by recipeId
+export const deleteRecipeImages = async (recipeId) => {
+    const [result] = await pool.query(`
+    DELETE FROM images
+    WHERE recipe_id = ?`, [recipeId])
 }
 
 // Delete all categories of a recipe by recipeId

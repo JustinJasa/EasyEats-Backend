@@ -5,8 +5,12 @@ const routerCategories = express.Router()
 
 // get all categories
 routerCategories.route("/").get(async (req, res) => {
-    const queryResult = await getAllCategories()
-    res.send(queryResult)
+    try {
+        const queryResult = await getAllCategories()
+        res.send(queryResult)
+    } catch(error) {
+        res.status(500).send("Error:" + error)
+    }
 });
 
 export default routerCategories
