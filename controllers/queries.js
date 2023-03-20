@@ -14,6 +14,21 @@ export const getAllCategories = async () => {
     return rows
 };
 
+// Get name of ALL categories
+export const getCategoryId = async (categoryName) => {
+    const [row] = await pool.query(`
+    SELECT category_id
+    FROM categories
+    WHERE name = ?`, [categoryName])
+
+    // Throw an error if the query result is empty
+    if(!row.length) {
+        throw new Error("Cannot fetch category")
+    }
+
+    return row
+};
+
 // Get basic info (recipeName, user) of ALL recipes
 export const getAllRecipes = async () => {
     const [rows] = await pool.query(`

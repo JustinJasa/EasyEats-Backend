@@ -3,7 +3,7 @@ import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName, getRec
          getRecipeIngredients, getRecipeSteps, getRecipeComments, createRecipe, createRecipeCategories, 
          createRecipeIngredients, createRecipeSteps, updateRecipeInfo, deleteRecipeCategories, deleteRecipeIngredients,
          deleteRecipeSteps, deleteRecipe, deleteComment, updateComment, createComment,
-         getComment, createRecipeImage, getRecipeImages, getRecipeImage, deleteRecipeImages} from '../controllers/queries.js';
+         getComment, createRecipeImage, getRecipeImages, getRecipeImage, deleteRecipeImages, getCategoryId} from '../controllers/queries.js';
 import multer from 'multer'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
@@ -166,8 +166,8 @@ routerRecipes.route("/:recipeId/categories/new").post(async (req, res) => {
   const { categories } = req.body
 
   for(let i = 0; i < categories.length; i++) {
-    const categoryId = categories[i]
-    const queryResult = await createRecipeCategories(recipeId, categoryId)
+    const categoryId = await getCategoryId(categories[i])
+    const queryResult = await createRecipeCategories(recipeId, categoryId[0].category_id)
   }
   res.status(200).send(`Added ${categories.length} categories to recipe ${recipeId}`)
 })
