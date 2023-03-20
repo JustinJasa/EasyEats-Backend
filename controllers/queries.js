@@ -4,7 +4,7 @@ import pool from '../services/db.js'
 // Get name of ALL categories
 export const getAllCategories = async () => {
     const [rows] = await pool.query(`
-    SELECT name FROM categories`)
+    SELECT name, category_id FROM categories`)
 
     // Throw an error if the query result is empty
     if(!rows.length) {
