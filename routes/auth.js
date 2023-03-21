@@ -12,29 +12,38 @@ routerAuth.post("/login", async (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
      // takes an email and password as a request
     const { email, password } = req.body;
-    //checks if the email exists in database
 
-    console.log(password)
+    // checks if the email exists in database
     const account = await getUserByEmail(email);
     if (account.length == 0) {
-      res.status(401).json("Email is incorrect");
+      throw "Email is not registered";
     }
 
-    //if user exists - compares password
+    // if user exists - compares password
     const isValid = await compare(password, account[0].password);
-    console.log(isValid)
     if (!isValid) {
-      res.status(401).json("Password is incorrect");
+      throw "Incorrect password";
     }
 
     // if credentials are correct sends back a json web toket
     const token = jwt.sign({ id: account.id }, 'cat123', { expiresIn: "1h" });
     res.status(200).json({ success:1, message:"login successful", token, account });
   } 
-  // catches any random errors
   catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
+    switch(error) {
+      case "Email is not registered": {
+        res.status(401).send(error)
+        break
+      }
+      case "Incorrect password": {
+        res.status(401).send(error)
+        break
+      }
+      default: {
+        res.status(500).send(error)
+        break
+      }
+    }
   }
  
 });
@@ -50,7 +59,7 @@ routerAuth.post("/signup", async (req, res) => {
     // check if account exists in database
     const account = await getUserByEmail(email);
     if (account.length !== 0) {
-      res.status(401).json("Account Already Exists");
+      throw "Email is already registered";
     }
     // bcrypts password
     const salt = genSaltSync(10)
@@ -65,8 +74,16 @@ routerAuth.post("/signup", async (req, res) => {
     res.status(200).json({ success:1, message:"Account Created!", user, token });
   
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
+    switch(error) {
+      case "Email is already registered": {
+        res.status(401).send(error)
+        break
+      }
+      default: {
+        res.status(500).send(error)
+        break
+      }
+    }
   }
 });
 
