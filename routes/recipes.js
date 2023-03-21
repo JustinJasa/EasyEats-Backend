@@ -262,8 +262,8 @@ routerRecipes.route("/:recipeId/categories/edit").put(async (req, res) => {
 
   // Then add the new ones
   for(let i = 0; i < categories.length; i++) {
-    const categoryId = categories[i]
-    const queryResult = await createRecipeCategories(recipeId, categoryId)
+    const categoryId = await getCategoryId(categories[i])
+    const queryResult = await createRecipeCategories(recipeId, categoryId[0].category_id)
   }
   res.status(200).send(`Recipe ${recipeId} now has ${categories.length} categories`)
 })
