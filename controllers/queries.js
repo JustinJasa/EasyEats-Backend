@@ -32,12 +32,11 @@ export const getCategoryId = async (categoryName) => {
 // Get basic info (recipeName, user) of ALL recipes
 export const getAllRecipes = async () => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username, MIN(i.path) AS image
+    SELECT r.recipe_id, r.name, u.username, MIN(i.image_id) AS image_id
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
-    GROUP BY r.recipe_id
-    HAVING COUNT(*) = 1`)
+    GROUP BY r.recipe_id`)
     
     return rows
 };
@@ -45,7 +44,7 @@ export const getAllRecipes = async () => {
 // Get basic info (recipeName, user) of recipes by categoryName
 export const getRecipesByCategoryName = async (categoryName) => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username, MIN(i.path) AS image
+    SELECT r.recipe_id, r.name, u.username, MIN(i.image_id) AS image_id
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     INNER JOIN recipe_categories rc ON r.recipe_id = rc.recipe_id
@@ -61,7 +60,7 @@ export const getRecipesByCategoryName = async (categoryName) => {
 // Get basic info (recipeName, user) of recipes by recipeName
 export const getRecipesByRecipeName = async (recipeName) => {
     const [rows] = await pool.query(`
-    SELECT r.recipe_id, r.name, u.username, MIN(i.path) AS image
+    SELECT r.recipe_id, r.name, u.username, MIN(i.image_id) AS image_id
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
