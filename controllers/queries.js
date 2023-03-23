@@ -36,7 +36,8 @@ export const getAllRecipes = async () => {
     FROM users u
     INNER JOIN recipes r ON u.user_id = r.user_id
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
-    GROUP BY r.recipe_id`)
+    GROUP BY r.recipe_id
+    ORDER BY r.recipe_id DESC`)
     
     return rows
 };
@@ -52,7 +53,8 @@ export const getRecipesByCategoryName = async (categoryName) => {
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
     WHERE c.name = ?
     GROUP BY r.recipe_id
-    HAVING COUNT(*) = 1`, [categoryName])
+    HAVING COUNT(*) = 1
+    ORDER BY r.recipe_id DESC`, [categoryName])
 
     return rows
 }
@@ -66,7 +68,8 @@ export const getRecipesByRecipeName = async (recipeName) => {
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
     WHERE r.name LIKE ?
     GROUP BY r.recipe_id
-    HAVING COUNT(*) = 1`, ['%' + recipeName + '%'])
+    HAVING COUNT(*) = 1
+    ORDER BY r.recipe_id DESC`, ['%' + recipeName + '%'])
 
     return rows
 }
