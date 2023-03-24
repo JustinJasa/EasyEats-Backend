@@ -74,6 +74,21 @@ export const getRecipesByRecipeName = async (recipeName) => {
     return rows
 }
 
+// Get basic info of recipes by recipeName
+export const getRecipesByUserId = async (userId) => {
+    const [rows] = await pool.query(`
+    SELECT r.recipe_id, r.name, u.username, MIN(i.image_id) AS image_id, r.date
+    FROM users u
+    INNER JOIN recipes r ON u.user_id = r.user_id
+    LEFT JOIN images i ON r.recipe_id = i.recipe_id
+    WHERE r.user_id = ?
+    GROUP BY r.recipe_id
+    HAVING COUNT(*) = 1
+    ORDER BY r.recipe_id DESC`, [userId])
+
+    return rows
+}
+
 // Get info (name, description, username, price_range) of a single recipe by recipe_id
 export const getRecipeInfo = async (recipeId) => {
     const [row] = await pool.query(`

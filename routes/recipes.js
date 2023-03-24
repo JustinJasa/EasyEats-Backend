@@ -2,7 +2,7 @@ import express from 'express'
 import { getAllRecipes, getRecipesByCategoryName, getRecipesByRecipeName, getRecipeInfo, getRecipeCategories, 
          getRecipeIngredients, getRecipeSteps, getRecipeComments, createRecipe, createRecipeCategories, 
          createRecipeIngredients, createRecipeSteps, updateRecipeInfo, deleteRecipeCategories, deleteRecipeIngredients,
-         deleteRecipeSteps, deleteRecipe, deleteComment, updateComment, createComment,
+         deleteRecipeSteps, deleteRecipe, deleteComment, updateComment, createComment, getRecipesByUserId,
          getComment, createRecipeImage, getRecipeImages, getRecipeImage, deleteRecipeImages, getCategoryId} from '../controllers/queries.js';
 import multer from 'multer'
 import * as path from 'path'
@@ -44,6 +44,12 @@ routerRecipes.route("/name/:recipeName").get(async (req, res) => {
   const queryResult = await getRecipesByRecipeName(req.params.recipeName)
   res.status(200).send(queryResult)
 });
+
+// GET  --- Get recipes by userId
+routerRecipes.route("/user/:userId").get(async (req, res) => {
+  const queryResult = await getRecipesByUserId(req.params.userId)
+  res.status(200).send(queryResult)
+})
 
 // GET  --- Get recipe basic info by recipeId
 routerRecipes.route("/:recipeId").get(async (req, res) => {
