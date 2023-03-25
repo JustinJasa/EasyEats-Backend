@@ -53,7 +53,6 @@ export const getRecipesByCategoryName = async (categoryName) => {
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
     WHERE c.name = ?
     GROUP BY r.recipe_id
-    HAVING COUNT(*) = 1
     ORDER BY r.recipe_id DESC`, [categoryName])
 
     return rows
@@ -68,7 +67,6 @@ export const getRecipesByRecipeName = async (recipeName) => {
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
     WHERE r.name LIKE ?
     GROUP BY r.recipe_id
-    HAVING COUNT(*) = 1
     ORDER BY r.recipe_id DESC`, ['%' + recipeName + '%'])
 
     return rows
@@ -83,7 +81,6 @@ export const getRecipesByUserId = async (userId) => {
     LEFT JOIN images i ON r.recipe_id = i.recipe_id
     WHERE r.user_id = ?
     GROUP BY r.recipe_id
-    HAVING COUNT(*) = 1
     ORDER BY r.recipe_id DESC`, [userId])
 
     return rows
