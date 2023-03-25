@@ -53,8 +53,8 @@ routerUsers.route("/new").post(async (req, res) => {
 // PUT  ---  Edit a user
 routerUsers.route("/:userId/edit").put(async (req, res) => {
     const userId = req.params.userId
-    const { email, username, password } = req.body
-    const queryResult = await updateUser(userId, email, username, password)
+    const { email, username } = req.body
+    const queryResult = await updateUser(userId, email, username)
     res.status(200).send(queryResult)
 });
 
