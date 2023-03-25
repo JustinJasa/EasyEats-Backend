@@ -351,13 +351,13 @@ export const updateComment = async (commentId, comment, rating) => {
 }
 
 // Update user information in users table
-export const updateUser = async (userId, username, password) => {
+export const updateUser = async (userId, email, username) => {
     const [result] = await pool.query(`
     UPDATE users
     SET
+        email = ?,
         username = ?,
-        password = ?,
-    WHERE user_id = ?`, [username, password, userId])
+    WHERE user_id = ?`, [email, username, userId])
 
     return getUser(userId)
 }
