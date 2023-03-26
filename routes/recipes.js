@@ -83,7 +83,8 @@ routerRecipes.get("/:recipeId/images/:imageId", async (req, res) => {
     
     // dirname path is <path_to_folder>/Easy-Eats-Backend/routes
     // Used .slice(0, -6) to remove the /routes from the path, and append to it /public/images/:imageName
-    res.sendFile(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + result[0].path)
+    const routesDirName = "routes"
+    res.sendFile(path.dirname(fileURLToPath(import.meta.url)).slice(0, -routesDirName.length) + result[0].path)
   } catch(error) {
     res.status(500).send("Error:" + error)
   }
@@ -238,7 +239,8 @@ routerRecipes.put("/:recipeId/images/edit", upload.array("images"), async (req, 
   for(let i = 0; i < images.length; i++) {
     // console.log(images[i].path)
     try {
-      unlinkSync(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + images[i].path)
+      const routesDirName = "routes"
+      unlinkSync(path.dirname(fileURLToPath(import.meta.url)).slice(0, -routesDirName.length) + images[i].path)
     } catch(error) {
       res.status(500).send(error)
     }
@@ -330,7 +332,8 @@ routerRecipes.route("/:recipeId/delete").delete(async (req, res) => {
   for(let i = 0; i < images.length; i++) {
     // console.log(images[i].path)
     try {
-      unlinkSync(path.dirname(fileURLToPath(import.meta.url)).slice(0, -6) + images[i].path)
+      const routesDirName = "routes"
+      unlinkSync(path.dirname(fileURLToPath(import.meta.url)).slice(0, -routesDirName.length) + images[i].path)
     } catch(error) {
       res.status(500).send(error)
     }
