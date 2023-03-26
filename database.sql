@@ -74,8 +74,8 @@ INSERT INTO users (username, email, password)
 VALUES
     ('Walter Hartwell White', 'mrwhite@student.ju.se', 'theOneWhoKnocks'),
     ('Saul Goodman', 'saul@student.ju.se', 'hooverMaxExtractPressureProModel60'),
-    ('Jesse Pinkman', 'jesse@gmail.com', 'yoyoyo1483369'),
-    ('Chuck McGill', 'chicanery@gmail.com', 'iAmNotCrazy');
+    ('Jesse Pinkman', 'jesse@student.ju.se', 'yoyoyo1483369'),
+    ('Chuck McGill', 'chicanery@student.ju.se', 'iAmNotCrazy');
 
 INSERT INTO categories (name)
 VALUES
