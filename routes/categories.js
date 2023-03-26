@@ -5,23 +5,12 @@ const routerCategories = express.Router()
 
 // get all categories
 routerCategories.route("/").get(async (req, res) => {
-    const queryResult = await getAllCategories()
-    res.send(queryResult)
+    try {
+        const queryResult = await getAllCategories()
+        res.send(queryResult)
+    } catch(error) {
+        res.status(500).send("Error:" + error)
+    }
 });
-
-// get a particular category
-routerCategories.route("/:id").get((req,res) => {
-    let categoryId = req.params.id
-    res.send(`getting category information for ${categoryId}`)
-})
-
-// create a new category and add to the categories
-routerCategories.route("/").post((req,res) => {
-    res.send("created a new category")
-    console.log(req.body)
-    res.json({
-        status: 'success'
-    })
-})
 
 export default routerCategories
