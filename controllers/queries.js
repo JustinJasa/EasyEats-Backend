@@ -195,7 +195,7 @@ export const getRecipeComments = async (recipeId) => {
     }
 
     const [rows] = await pool.query(`
-    SELECT c.comment_id, u.user_id, u.username, c.comment, c.rating
+    SELECT c.comment_id, u.user_id, u.username, c.comment, c.date
     FROM recipes r
     INNER JOIN comments c ON r.recipe_id = c.recipe_id
     INNER JOIN users u ON c.user_id = u.user_id
@@ -306,8 +306,8 @@ export const createRecipeSteps = async (recipeId, description) => {
 // Insert a new comment into comments table
 export const createComment = async (userId, recipeId, comment, rating) => {
     const [result] = await pool.query(`
-    INSERT INTO comments (user_id, recipe_id, comment, rating)
-    VALUES (?, ?, ?, ?)`, [userId, recipeId, comment, rating])
+    INSERT INTO comments (user_id, recipe_id, comment, date)
+    VALUES (?, ?, ?, now())`, [userId, recipeId, comment, rating])
 
     const id = result.insertId
     return getComment(id)
@@ -339,13 +339,12 @@ export const updateRecipeInfo = async (recipeId, name, description, time_h, time
 }
 
 // Update comment information in comments table
-export const updateComment = async (commentId, comment, rating) => {
+export const updateComment = async (commentId, comment) => {
     const [result] = await pool.query(`
     UPDATE comments
     SET
-        comment = ?,
-        rating = ?
-    WHERE comment_id = ?`, [comment, rating, commentId])
+        comment = ?
+    WHERE comment_id = ?`, [comment, commentId])
 
     return getComment(commentId)
 }
