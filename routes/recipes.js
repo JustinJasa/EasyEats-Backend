@@ -207,9 +207,9 @@ routerRecipes.route("/:recipeId/steps/new").post(async (req, res) => {
 //  POST --- Insert a new comment on a recipe
 routerRecipes.route("/:recipeId/comments/new").post(async (req, res) => {
   const recipeId = req.params.recipeId
-  const { userId, comment, rating } = req.body
+  const { userId, comment } = req.body
 
-  const queryResult = await createComment(userId, recipeId, comment, rating)
+  const queryResult = await createComment(userId, recipeId, comment)
 
   res.status(200).send(queryResult)
 })
