@@ -355,7 +355,7 @@ export const updateUser = async (userId, email, username) => {
     UPDATE users
     SET
         email = ?,
-        username = ?,
+        username = ?
     WHERE user_id = ?`, [email, username, userId])
 
     return getUser(userId)
