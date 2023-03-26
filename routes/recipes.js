@@ -309,9 +309,9 @@ routerRecipes.route("/:recipeId/steps/edit").put(async (req, res) => {
 //  PUT --- Update a comment on a recipe
 routerRecipes.route("/:recipeId/comments/:commentId/edit").put(async (req, res) => {
   const commentId = req.params.commentId
-  const { comment, rating } = req.body
+  const { comment } = req.body
 
-  const queryResult = await updateComment(commentId, comment, rating)
+  const queryResult = await updateComment(commentId, comment)
   res.status(200).send(`Comment ${commentId} has been updated`)
 })
 
